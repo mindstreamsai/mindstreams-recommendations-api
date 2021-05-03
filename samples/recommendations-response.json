@@ -1,0 +1,114 @@
+{
+	"id": "6120894d-0ce5-4738-adcb-6736b943b202",
+	"sessionId": "7ac9cfd9-db52-429a-a621-2e43dba7a267",
+	"userId": "austinbeaudreau@gmail.com",
+	"ts": "2021-04-25T19:15:39.301251",
+  "status": 200,
+	"context": {
+    "app": {
+      "app_name":"course:course_taking",
+      "app_country":"US"
+    },
+		"page": {
+			"url": "https://www.udemy.com/course/csharp-tutorial-for-beginners/learn/lecture/2936428#overview",
+			"path": "/course/csharp-tutorial-for-beginners/learn/lecture/2936428",
+			"kind": "curriculum.content.video",
+			"tags": ["videos", "k12"]
+		},
+    "product": {
+      "course": "CS229: Machine Learning",
+      "provider": "Stanford University",
+      "description": "This course provides a broad introduction to machine learning and statistical pattern recognition. Topics include: supervised learning (generative/discriminative learning, parametric/non-parametric learning, neural networks, support vector machines); unsupervised learning (clustering, dimensionality reduction, kernel methods); learning theory (bias/variance tradeoffs, practical advice); reinforcement learning and adaptive control. The course will also discuss recent applications of machine learning, such as to robotic control, data mining, autonomous navigation, bioinformatics, speech recognition, and text and web data processing.",
+      "kind": "university_class",
+      "level": "undergraduate",
+      "field": "computer_science",
+      "area": "machine_learning",
+      "created": "2019-06-21",
+      "updated": "2021-04-25",
+      "isActive": true,
+      "links": {
+        "info": "http://cs229.stanford.edu/index.html#info",
+        "syllabus": "http://cs229.stanford.edu/syllabus-spring2021.html",
+        "curriculum": "https://cs.stanford.edu/degrees/undergrad/CurriculumRevision-Overview-09-26-08.pdf"
+      }
+    },
+    "topic": {
+      "id": "Gradient_descent",
+      "uri": "https://en.wikipedia.org/wiki/Gradient_descent",
+      "name": "Gradient Descent",
+      "categories": [
+        "Mathematical optimization", 
+        "First order methods", 
+        "Optimization algorithms and methods", 
+        "Gradient methods"
+      ],
+      "relatedTopics":[
+        "Backtracking line search",
+        "Conjugate gradient method",
+        "Stochastic gradient descent",
+        "Rprop",
+        "Delta rule",
+        "Wolfe conditions",
+        "Preconditioning",
+        "Broyden–Fletcher–Goldfarb–Shanno algorithm",
+        "Davidon–Fletcher–Powell formula",
+        "Nelder–Mead method",
+        "Gauss–Newton algorithm",
+        "Hill climbing",
+        "Quantum annealing"        
+      ]
+    },
+		"content": {
+      "contentId": "c324824e-0ce5-4738-adcb-6736b943b111",
+			"kind": "curriculum.content.video",
+      "url": "https://www.udemy.com/02e9db8a-07af-4b30-b4ec-99afa07e32b0"
+    }
+  },
+  "recommendations": [
+    {
+      "id": "6120894d-0ce5-4738-adcb-6736b943b202",
+      "rank": 1,
+      "category": "understanding",
+      "action": "video.slower",
+      "confidence": 0.53,
+      "ts": "2021-04-25T19:15:39.301251"
+    },
+    {
+      "id": "3468367d-0ce5-4738-adcb-6736b943b201",
+      "rank": 2,
+      "category": "engagement",
+      "action": "game.trivia",
+      "confidence": 0.48,
+      "ts": "2021-04-25T19:15:39.301251"
+    },
+    {
+      "id": "6120894d-0ce5-4738-adcb-6736b943b202",
+      "rank": 3,
+      "category": "understanding",
+      "action": "feedback.ask",
+      "confidence": 0.34,
+      "ts": "2021-04-25T19:15:39.301251"
+    },
+    {
+      "id": "3468367d-0ce5-4738-adcb-6736b943b201",
+      "rank": 4,
+      "category": "understanding",
+      "action": "video.push",
+      "context": {
+        "contentId": "7a7d4908-3a33-41f3-909c-c6693b11ee63",
+        "kind": "curriculum.content.video",
+        "title": "C# Arrays vs. LUA Tables",
+        "duration": 157,
+        "prompt": true,
+        "trigger": {
+          "kind": "video.playback",
+          "position": 108
+        },
+        "objective": "comparison_learning",
+        "url": "https://www.udemy.com/720fdb8a-07af-4b30-b4ec-99afa07e32b0"
+      },
+      "confidence": 0.31,
+      "ts": "2021-04-25T19:15:39.301251"
+    }
+  ]
+}

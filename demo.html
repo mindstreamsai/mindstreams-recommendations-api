@@ -3,6 +3,38 @@
     <head>
         <script>
             var sampleRequest = '{"id":"6120894d-0ce5-4738-adcb-6736b943b202","sessionId":"7ac9cfd9-db52-429a-a621-2e43dba7a267","userId":"austinbeaudreau@gmail.com","ts":"2021-04-25T19:15:39.301251","context":{"user":{"name":{"firstName":"Austin","lastName":"Beaudreau","display_name":"Austin Beaudreau"},"location":{"country":"US","time_zone":"America\/Chicago"},"language":"en","email":"austinbeaudreau@gmail.com","organization":null,"_extended":{"_class":"user","name":"Austin","surname":"Beaudreau","encrypted_id":"x01WoHO9JA8HJcGU6nFKT8fwA==","is_authenticated":true,"learning_languages":[],"country":"US","has_made_paid_purchase":true,"created":"2018-03-22T16:43:33Z","locale":"en_US","job_title":"","initials":"AB","language":"en","email":"austinbeaudreau@gmail.com","organization":null,"display_name":"Austin Beaudreau","time_zone":"America\/Chicago","number_of_courses_purchased":5,"image_50x50":"https:\/\/img-a.udemycdn.com\/user\/50x50\/anonymous_3.png?-JXqQyEacyJx4_5cXfiKrBtRwJvlZydnORHcH8qD-05J0jZy8p-rtCeU1p8Bu_bnq-4pBEQt6fmleCIVoB1XQzdYMhPXw3leIU50H8ya4xio8zFQzgDWoF4","title":"Austin Beaudreau"}},"device":{"isTablet":false,"isPC":true},"site":{"domain":"udemy.com","google_tag_manager_id":"GTM-7BF3X","google_analytics_id":"UA-12366301-45","visitor_uuid":"3f90757c055347c3835e4cdffc47ae0e","first_visit_time":"2021-02-11T03:58:33.554Z","is_first_time_visitor":false},"page":{"url":"https:\/\/www.udemy.com\/course\/csharp-tutorial-for-beginners\/learn\/lecture\/2936428#overview","path":"\/course\/csharp-tutorial-for-beginners\/learn\/lecture\/2936428"},"content":{"kind":"curriculum.content.video","url":"https:\/\/www.udemy.com\/02e9db8a-07af-4b30-b4ec-99afa07e32b0","status":"started","duration":37.2,"position":12.1,"speed":1}},"feedback":[{"id":"6120894d-0ce5-4738-adcb-6736b943b202","category":"understanding","action":"video.slower","ts":"2021-04-25T19:15:39.301251","result":0.8},{"id":"3468367d-0ce5-4738-adcb-6736b943b201","category":"engagement","action":"game.trivia","ts":"2021-04-25T19:15:39.301251","result":0}]}';
+            var isBusy = false;
+
+            Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+                get: function(){
+                    return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+                }
+            });
+
+            function AddMarkers() {
+                // Video and seekbar
+                var video = document.getElementById('video');
+                var seekBar = document.getElementById('seekbar');
+
+                // Positions of markers in seconds.
+                var positions = [3, 6.5, 7];
+
+                // Add each marker to the #seekbar element.
+                positions.forEach(function(position) {
+                    // Is position within range of the duration?
+                    if (position <= video.duration) {
+
+                        // Calculate position in percentage and add to the #seekbar.
+                        var left = (position / video.duration) * 100 + '%';
+
+                        // Create marker and give it the left value.
+                        var marker = document.createElement('div');
+                        marker.classList.add('bubles');
+                        marker.style.left = left;
+                        seekBar.appendChild(marker);
+                    }
+                });                
+            }
 
             function AdaptiveLearning_Video_Slower() {
                 var video = document.getElementsByTagName('video')[0];
@@ -30,20 +62,40 @@
             };
 
             function AdaptiveLearning_Game_Trivia() {
+                isBusy = true;
                 prompt('Who invented the Gradient Descent algorithm?');
+                isBusy = false;
             };
 
             function AdaptiveLearning_Feedback_Ask() {
+                isBusy = true;
                 prompt('Have any feedback for me?');
+                isBusy = false;
             };
 
 
 
             function DoStuff() {
+                if (isBusy) {
+                    return false;
+                }
                 var output_div = document.getElementById('log');
 
                 var userId = '1000';
                 var request = JSON.parse(sampleRequest);
+                var video = document.getElementById('video');
+                var isPlaying = video.playing;
+                var isPaused = video.paused;
+                
+                if (isPaused || isPlaying) {
+                    request.context.content.status = (isPaused && 'paused') || 'playing';                    
+                } else {
+                    request.context.content.status = 'stopped';
+                }
+                request.context.content.speed = video.playbackRate;
+                request.context.content.position = video.position;
+                request.context.content.duration = video.duration;
+
                 var apicall = '/api/users/' + userId + '/recommendations';
                 var xhr = new XMLHttpRequest();
 
@@ -91,6 +143,6 @@
         <span><a href="https://ocw.mit.edu/courses/mathematics/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/video-lectures/lecture-25-stochastic-gradient-descent/">Link</a></span>
         <br/>
         <br/>
-        <video width="320" height="240" controls preload="auto" src="https://ia600908.us.archive.org/16/items/MIT18.065S18/MIT18_065S18_Lecture25_300k.mp4"></video>
+        <video id="video" width="320" height="240" controls preload="auto" src="https://signostix-video.s3.amazonaws.com/mit_lecture5.mp4"></video>
     </body>
 </html>
