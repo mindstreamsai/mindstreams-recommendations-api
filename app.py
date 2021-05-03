@@ -19,54 +19,14 @@ app = Flask(__name__)
 s3 = boto3.client('s3')
 
 dynamodb = boto3.resource('dynamodb', 'us-east-2')
-table = dynamodb.Table('mindstreams-user-recommendations')
+table_scores = dynamodb.Table('mindstreams-user-scores')
 topic_table = dynamodb.Table('mindstreams-topics')
 content_table = dynamodb.Table('mindstreams-content-objects')
 
-foo = """
-kinesis = boto3.client('kinesis', region_name = 'us-east-2')
-
-shard_iterator = None
-
-info = kinesis.describe_stream(StreamName = 'mindstreams-ingestion')
-shard_ids = []
-stream_name = None 
-if info and 'StreamDescription' in info:
-    stream_name = info['StreamDescription']['StreamName']                   
-    for shard_id in info['StreamDescription']['Shards']:
-         shard_id = shard_id['ShardId']
-         print(shard_id)
-         shard_iterator = kinesis.get_shard_iterator(StreamName=stream_name, ShardId=shard_id, ShardIteratorType='TRIM_HORIZON')
-         shard_ids.append({'shard_id' : shard_id ,'shard_iterator' : shard_iterator['ShardIterator'] })
-
-
-def GetRecords(shard_iterator):
-    tries = 0
-    result = []
-    while tries < 100:
-        tries += 1
-        response = kinesis.get_records(ShardIterator = shard_iterator, Limit = 10)
-        shard_iterator = response['NextShardIterator']
-        if len(response['Records'])> 0:
-            for res in response['Records']: 
-                result.append(res['Data'])
-            print()
-            return result, shard_iterator
-            print(result)
-
-
-while shard_iterator:
-    result, shard_iterator = GetRecords(shard_iterator)
-    exit()
-"""
 
 possible_actions = [
     "video.slower",
-    "video.faster",
-    "video.pause",
-    "video.resume",
-    "game.trivia",
-    "feedback.ask"    
+    "video.faster"
 ]
 
 list_of_recommendaitons = [
@@ -85,10 +45,10 @@ def clean_json(o):
     return o
 
 
-def get_latest_data_for_user(user_id):
+def get_latest_scores_for_user(user_id):
     user_data = None
     key = { "userId": user_id }
-    response = table.get_item(Key = key)
+    response = table_scores.get_item(Key = key)
     meta = response["ResponseMetadata"]
     if meta["HTTPStatusCode"]:
         user_data = clean_json(response["Item"])
@@ -143,7 +103,7 @@ def mindstream_user_give_recommendations(user_id):
     data = json.loads(request_data)
 
     user_id = data["userId"]
-    user_data = get_latest_data_for_user(user_id)
+    user_data = get_latest_scores_for_user(user_id)
     clean_data = clean_json(user_data)
     print(json.dumps(clean_data, indent=2))
 
@@ -153,32 +113,48 @@ def mindstream_user_give_recommendations(user_id):
     video_speed = (content and content["speed"]) or 0
     print(video_status, video_speed)
 
+    user_scores = user_data["scores"]
+    user_learning_rate = user_scores["learning_rate"]
+    recommended_speed = user_learning_rate
+
     candidate_actions = []
     if video_status == 'playing':
-        candidate_actions.append('video.pause')
+        # candidate_actions.append('video.pause')
         if video_speed <= 1.5:
             candidate_actions.append('video.faster')
         if video_speed >= 0.75:
             candidate_actions.append('video.slower')
     elif video_status == 'paused':
-        candidate_actions.append('video.resume')
+        # candidate_actions.append('video.resume')
         candidate_actions.append('game.trivia')
         candidate_actions.append('feedback.ask')
 
     data = '{"id":"6120894d-0ce5-4738-adcb-6736b943b202","sessionId":"7ac9cfd9-db52-429a-a621-2e43dba7a267","userId":"austinbeaudreau@gmail.com","ts":"2021-04-25T19:15:39.301251","status":200,"context":{"app":{"app_name":"course:course_taking","app_country":"US"},"page":{"url":"https:\/\/www.udemy.com\/course\/csharp-tutorial-for-beginners\/learn\/lecture\/2936428#overview","path":"\/course\/csharp-tutorial-for-beginners\/learn\/lecture\/2936428","kind":"curriculum.content.video","tags":["videos","k12"]},"topic":{"id":"Gradient_descent","uri":"https:\/\/en.wikipedia.org\/wiki\/Gradient_descent","name":"Gradient Descent"},"content":{"contentId":"c324824e-0ce5-4738-adcb-6736b943b111","kind":"curriculum.content.video","url":"https:\/\/www.udemy.com\/02e9db8a-07af-4b30-b4ec-99afa07e32b0"}},"recommendations":[{"id":"6120894d-0ce5-4738-adcb-6736b943b202","rank":1,"category":"understanding","action":"video.slower","confidence":0.53,"ts":"2021-04-25T19:15:39.301251"},{"id":"3468367d-0ce5-4738-adcb-6736b943b201","rank":2,"category":"engagement","action":"game.trivia","confidence":0.48,"ts":"2021-04-25T19:15:39.301251"},{"id":"6120894d-0ce5-4738-adcb-6736b943b202","rank":3,"category":"understanding","action":"feedback.ask","confidence":0.34,"ts":"2021-04-25T19:15:39.301251"},{"id":"3468367d-0ce5-4738-adcb-6736b943b201","rank":4,"category":"understanding","action":"video.push","context":{"contentId":"7a7d4908-3a33-41f3-909c-c6693b11ee63","kind":"curriculum.content.video","title":"C# Arrays vs. LUA Tables","duration":157,"prompt":true,"trigger":{"kind":"video.playback","position":108},"objective":"comparison_learning","url":"https:\/\/www.udemy.com\/720fdb8a-07af-4b30-b4ec-99afa07e32b0"},"confidence":0.31,"ts":"2021-04-25T19:15:39.301251"}]}';
 
-    count = math.floor(random.random() * 4)
     recommended_actions = []
-    for i in range(count):
-        j = math.ceil(random.random() * len(candidate_actions)) - 1
+    action = None
+    if recommended_speed > video_speed:
         action = {
             "id": str(uuid.uuid4()),
-            "rank": i,
+            "rank": 1,
             "category": "understanding",
-            "action": candidate_actions[j],
+            "action": "video.faster",
             "confidence": random.random(),
+            "speed": recommended_speed,
             "ts": datetime.datetime.now().isoformat()
         }
+    elif recommended_speed < video_speed:
+        action = {
+            "id": str(uuid.uuid4()),
+            "rank": 1,
+            "category": "understanding",
+            "action": "video.slower",
+            "confidence": random.random(),
+            "speed": recommended_speed,
+            "ts": datetime.datetime.now().isoformat()
+        }
+
+    if action is not None:
         recommended_actions.append(action)
 
     response = json.loads(data)
