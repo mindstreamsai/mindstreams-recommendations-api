@@ -1,0 +1,64 @@
+chloes-MacBook-Pro:mindstreams-bci-data-service chloe$ python3 bci-data-service.py chloe 
+BCI Data Service for chloe
+Connecting to BCI device...
+Requesting device access...
+Authorized to the device...
+engagement,excitement,excLast1Min,stress,relaxation,interest,focus
+0.472475,0.623094,0.0,0.543521,0.489806,0.434044,0.464055
+0.53954,0.502986,0.0,0.57673,0.536356,0.628224,0.529557
+0.536542,0.463476,0.0,0.471049,0.589529,0.489938,0.553387
+0.497935,0.536773,0.0,0.462763,0.398166,0.461991,0.503345
+0.429615,0.515953,0.0,0.54828,0.496053,0.468139,0.383007
+0.497523,0.365244,0.0,0.43281,0.508677,0.536273,0.56329
+0.444235,0.500893,0.0,0.388484,0.413404,0.359161,0.417204
+0.434464,0.465641,0.0,0.508257,0.388915,0.479314,0.39871
+0.402905,0.390597,0.0,0.444592,0.528582,0.437401,0.452102
+0.49672,0.427816,0.0,0.367177,0.395081,0.459759,0.504384
+0.437777,0.531912,0.0,0.512674,0.439589,0.397307,0.365241
+0.442436,0.410406,0.0,0.500184,0.492417,0.529609,0.520098
+0.507084,0.487973,0.0,0.419496,0.517871,0.46503,0.497722
+0.557601,0.528917,0.0,0.526566,0.447916,0.520635,0.502259
+0.435708,0.53452,0.0,0.570104,0.555774,0.473237,0.478067
+0.582853,0.494206,0.0,0.492112,0.544973,0.621019,0.605527
+0.59522,0.587982,0.0,0.549549,0.563978,0.505414,0.519108
+0.512609,0.566274,0.0,0.600018,0.514582,0.55381,0.56772
+0.533243,0.561127,0.0,0.552103,0.605867,0.57194,0.536052
+0.651749,0.518246,0.0,0.534676,0.561782,0.615991,0.622433
+0.470769,0.594212,0.0,0.556106,0.51827,0.431112,0.487062
+0.514413,0.518225,0.0,0.546644,0.511104,0.606375,0.534477
+^CTraceback (most recent call last):
+  File "bci-data-service.py", line 334, in <module>
+    main()
+  File "bci-data-service.py", line 331, in main
+    s.start(user_id, streams)
+  File "bci-data-service.py", line 321, in start
+    self.c.sub_request(streams)
+  File "/Users/chloe/Desktop/src/mindstreamsai/mindstreams-bci-data-service/cortex.py", line 260, in sub_request
+    new_data = self.ws.recv()                
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_core.py", line 314, in recv
+    opcode, data = self.recv_data()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_core.py", line 331, in recv_data
+    opcode, frame = self.recv_data_frame(control_frame)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_core.py", line 344, in recv_data_frame
+    frame = self.recv_frame()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_core.py", line 378, in recv_frame
+    return self.frame_buffer.recv_frame()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_abnf.py", line 361, in recv_frame
+    self.recv_header()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_abnf.py", line 309, in recv_header
+    header = self.recv_strict(2)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_abnf.py", line 396, in recv_strict
+    bytes_ = self.recv(min(16384, shortage))
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_core.py", line 453, in _recv
+    return recv(self.sock, bufsize)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_socket.py", line 102, in recv
+    bytes_ = _recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/websocket/_socket.py", line 84, in _recv
+    return sock.recv(bufsize)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/ssl.py", line 1226, in recv
+    return self.read(buflen)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/ssl.py", line 1101, in read
+    return self._sslobj.read(len)
+KeyboardInterrupt
+
+chloes-MacBook-Pro:mindstreams-bci-data-service chloe$ 
