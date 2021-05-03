@@ -11,11 +11,13 @@ import random
 import math
 import uuid
 from decimal import Decimal
-
+from flask_cors import CORS
  
 BUCKET = 'mindstreams'
 
 app = Flask(__name__)
+CORS(app)
+
 s3 = boto3.client('s3')
 
 dynamodb = boto3.resource('dynamodb', 'us-east-2')
