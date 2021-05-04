@@ -53,9 +53,12 @@ def get_latest_scores_for_user(user_id):
     user_data = None
     key = { "userId": user_id }
     response = table_scores.get_item(Key = key)
-    meta = response["ResponseMetadata"]
-    if meta["HTTPStatusCode"]:
-        user_data = clean_json(response["Item"])
+    print(response)
+    meta = (response and response["ResponseMetadata"]) or None
+    status_code = (meta and meta.get("HTTPStatusCode")) or 500
+    if status_code == 200:
+        item = response.get("Item", None)
+        user_data = (item and clean_json(response["Item"])) or None
     return user_data
 
 
@@ -103,11 +106,15 @@ def mindstream_list_topics():
 ### Recommendations ###
 @app.route('/api/users/<user_id>/recommendations', methods=['POST'])
 def mindstream_user_give_recommendations(user_id):
+    user_id = None
     request_data = request.get_data()
     data = json.loads(request_data)
 
     user_id = data["userId"]
     user_data = get_latest_scores_for_user(user_id)
+    if user_data is None:
+        return {}
+
     clean_data = clean_json(user_data)
 
     context = data["context"]
@@ -121,6 +128,7 @@ def mindstream_user_give_recommendations(user_id):
         user_last_interaction_time = user_context.get("lastInteractionTime", 0) / 1000
 
     user_scores = user_data["scores"]
+
     user_learning_rate = user_scores["learning_rate"]
     user_cognitive_presence = user_scores["cognitive_presence"]
     recommended_speed = user_learning_rate
@@ -161,10 +169,18 @@ def mindstream_user_give_recommendations(user_id):
             }
     elif video_status == 'paused':
         if (user_cognitive_presence > 0.7) and (last_interaction_seconds_ago > 15):
-            action = {
-                "category": "understanding",
-                "action": "topic.supplemental_content"
-            }
+            print('** SUPPLEMENTAL **')
+            last_time = user_actions.get("topic.supplemental_content", None)
+            print(last_time)
+            if last_time is None:
+                user_actions["topic.supplemental_content"] = time.time()
+            delta_time = time.time() - (last_time or 0)
+            if delta_time > 60:
+                user_actions["topic.supplemental_content"] = time.time()                
+                action = {
+                    "category": "understanding",
+                    "action": "topic.supplemental_content"
+                }
         else:
             action = {
                 "category": "understanding",
