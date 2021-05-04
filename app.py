@@ -160,10 +160,16 @@ def mindstream_user_give_recommendations(user_id):
                 "speed": recommended_speed
             }
     elif video_status == 'paused':
-        action = {
-            "category": "understanding",
-            "action": "video.resume"
-        }
+        if (user_cognitive_presence > 0.7) and (last_interaction_seconds_ago > 15):
+            action = {
+                "category": "understanding",
+                "action": "topic.supplemental_content"
+            }
+        else:
+            action = {
+                "category": "understanding",
+                "action": "video.resume"
+            }
 
     if action is not None:
         action["id"] = str(uuid.uuid4())
